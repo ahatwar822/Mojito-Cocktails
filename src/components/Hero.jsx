@@ -1,30 +1,49 @@
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { SplitText } from 'gsap/all'
-import React from 'react'
+import { useRef } from 'react'
+import { useMediaQuery } from 'react-responsive'
 
 const Hero = () => {
 
-    useGSAP( () => {
-        const heroSplit = new SplitText('.title', {type: 'chars, words'});
-        const paragraphSplit = new SplitText('.subtitle', {type: 'lines'});
+    const videoRef = useRef();
 
-        heroSplit.chars.forEach((char) =>char.classList.add('text-gradient'));
+    const isMobile = useMediaQuery({ maxWidth: 767 })
 
-        gsap.from(heroSplit.chars, {
-            yPercent : 100,
-            duration: 1,
-            ease : 'expo.out',
-            stagger : 0.06
-        })
+    useGSAP(() => {
 
-        gsap.from(paragraphSplit.lines, {
-            opacity: 0,
-            yPercent: 100,
-            duration: 1, 
-            ease: 'expo.out',
-            stagger: 0.06,
-            delay: 1,
+        let heroSplit
+        let paragraphSplit
+
+        document.fonts.ready.then(() => {
+            heroSplit = new SplitText('.title', {
+                type: 'chars, words',
+            })
+
+            paragraphSplit = new SplitText('.subtitle', {
+                type: 'lines',
+            })
+            
+            // Apply text-gradient class once before animating
+            heroSplit.chars.forEach(char =>
+                char.classList.add('text-gradient')
+            )
+
+            gsap.from(heroSplit.chars, {
+                yPercent: 100,
+                duration: 1.8,
+                ease: 'expo.out',
+                stagger: 0.06,
+            })
+
+            gsap.from(paragraphSplit.lines, {
+                opacity: 0,
+                yPercent: 100,
+                duration: 1.8,
+                ease: 'expo.out',
+                stagger: 0.06,
+                delay: 1,
+            })
         })
 
         gsap.timeline({
@@ -35,13 +54,37 @@ const Hero = () => {
                 scrub: true
             }
         })
-        .to('.right-leaf',{y : 200}, 0 )
-        .to('.left-leaf', {y: -200},0)
-    },[])
+            .to('.right-leaf', { y: 200 }, 0)
+            .to('.left-leaf', { y: -200 }, 0)
+
+        const startValue = isMobile ? 'top 50%' : 'center 60%';
+        const endValue = isMobile ? '120% top' : 'bottom top';
+
+        let tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: 'video',
+                start: startValue,
+                end: endValue,
+                scrub: true,
+                pin: true,
+
+            }
+        });
+
+        videoRef.current.onloadedmetadata = () => {
+            tl.to(videoRef.current, {
+                currentTime: videoRef.current.duration,
+            }
+            );
+        };
+
+    }, [])
 
     return (
         <>
-            <section id='hero' className='noisy'>
+            <section id='hero' className="relative overflow-hidden">
+
+                <div className="noisy"></div>
                 <h1 className='title'>MOJITO</h1>
 
                 <img
@@ -59,13 +102,13 @@ const Hero = () => {
                     <div className='content'>
                         <div className='space-y-5 hidden md:block'>
                             <p>Cool. Crisp. Classic.</p>
-                            <p>Sip the Spirit <br /> of Summer</p>
+                            <p className='subtitle'>Sip the Spirit <br /> of Summer</p>
 
                         </div>
 
                         <div className='view-cocktails'>
                             <p className='subtitle'>
-                                Every Cocktail in the menu is a blend of Premium incridents, 
+                                Every Cocktail in the menu is a blend of Premium incridents,
                                 createve mixology and a dash of passion.
                             </p>
 
@@ -77,6 +120,16 @@ const Hero = () => {
 
                 </div>
             </section>
+
+            <div className="video absolute inset-0">
+                <video
+                    ref={videoRef}
+                    muted
+                    playsInline
+                    preload="auto"
+                    src="/videos/output.mp4"
+                />
+            </div>
         </>
     )
 }
