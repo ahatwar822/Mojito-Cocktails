@@ -9,11 +9,13 @@ A modern and interactive cocktail website showcasing different Mojito recipes wi
 
 ## 🎥 Project Preview
 
-> *(If the video does not autoplay on GitHub, download and view it locally)*
+![Mojito Cocktails Demo](public/videos/Mojito_Cocktails.gif)
 
-<video src="public/videos/Mojito_Cocktails.mp4" controls width="100%"></video>
+> *(If the video does not autoplay on GitHub, download and view it locally)*
+👉 *https://github.com/ahatwar822/Mojito-Cocktails/blob/1329a9c6dba5756768ce793ea3654fefe4e685e2/public/videos/Mojito_Cocktails.mp4*
 
 ---
+
 
 ## <a name="quick-start"> Quick Start</a>
 
